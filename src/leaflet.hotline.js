@@ -262,9 +262,6 @@
 		}
 	}
 
-	Hotline.prototype = {};
-
-
 	const Renderer = class extends L.Canvas {
 
 		_initContainer() {
