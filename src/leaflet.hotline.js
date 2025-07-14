@@ -297,7 +297,8 @@ class Renderer extends Canvas {
 }
 
 const renderer = function (options) {
-	return L.Browser.canvas ? new Renderer(options) : null;
+	//return Browser.canvas ? new Renderer(options) : null;
+	return new Renderer(options)
 }
 
 
@@ -423,7 +424,8 @@ L.Hotline = class extends Polyline {
 	}
 
 	_clickTolerance() {
-		return this.options.weight / 2 + this.options.outlineWidth + (L.Browser.touch ? 10 : 0);
+		//return this.options.weight / 2 + this.options.outlineWidth + (Browser.touch ? 10 : 0);
+		return this.options.weight / 2 + this.options.outlineWidth + 10;
 	}
 }
 
