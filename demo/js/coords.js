@@ -1,4 +1,4 @@
-var coords = [
+const coords = [
   [
     50.516518,
     6.993713,

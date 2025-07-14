@@ -1,10 +1,11 @@
-<html>
+<html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-	<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+	<title>Leaflet.Hotline Demo</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 	<script src="js/coords.js"></script>
 	<script src="../dist/leaflet.hotline.js"></script>
-	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 	<style>
 		header,
 		section {
@@ -68,11 +69,11 @@
 			<br/>
 			<label>
 				<span>Min - </span>
-				100 <input id="min" type="range" min="100" max="250" value="150" steps="5"/> 250
+				100 <input id="min" type="range" min="100" max="250" value="150" step="5"/> 250
 			</label>
 			<label>
 				<span>Max - </span>
-				250 <input id="max" type="range" min="250" max="500" value="350" steps="5"/> 500
+				250 <input id="max" type="range" min="250" max="500" value="350" step="5"/> 500
 			</label>
 			<p class="muted">The range of the z values is around 150 to 350. All values below the minimum get displayed in the start color of the palette, all values above 350 get displayed in the end color of the palette. All values in between get displayed in the color of the gradient (as defined by the palette) picked at their relative position.</p>
 			<label>
@@ -94,16 +95,16 @@
 		</aside>
 	</section>
 	<script>
-		var tiles = L.tileLayer('//{s}.tile.osm.org/{z}/{x}/{y}.png', {
-			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+		const tiles = L.tileLayer('//{s}.tile.osm.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
 		});
-		var map = L.map('map', {
+		const map = L.map('map', {
 			layers: [tiles],
 			scrollWheelZoom: false,
 			dragging: false,
 			tap: false
 		});
-		var hotlineLayer = L.hotline(coords, {
+		const hotlineLayer = L.hotline(coords, {
 			min: 150,
 			max: 350,
 			palette: {
@@ -115,28 +116,28 @@
 			outlineColor: '#000000',
 			outlineWidth: 1
 		});
-		var bounds = hotlineLayer.getBounds();
+		const bounds = hotlineLayer.getBounds();
 
 		map.fitBounds(bounds);
 		hotlineLayer.bindPopup('Thanks for clicking.<br/>Play with me!').addTo(map);
 
 
-		['weight', 'outlineWidth', 'min', 'max', 'smoothFactor'].forEach(function (value) {
-			document.getElementById(value).addEventListener('input', function () {
-				var style = {};
-				style[value] = parseInt(this.value, 10);
+		['weight', 'outlineWidth', 'min', 'max', 'smoothFactor'].forEach((value) => {
+			document.getElementById(value).addEventListener('input', (event) => {
+				let style = {};
+				style[value] = parseInt(event.target.value, 10);
 				hotlineLayer.setStyle(style).redraw();
 			});
 		});
 
-		document.getElementById('outlineColor').addEventListener('input', function () {
-			hotlineLayer.setStyle({ 'outlineColor': this.value }).redraw();
+		document.getElementById('outlineColor').addEventListener('input', (event) => {
+			hotlineLayer.setStyle({ 'outlineColor': event.target.value }).redraw();
 		});
 
-		var paletteColor1 = document.getElementById('paletteColor1');
-		var paletteColor2 = document.getElementById('paletteColor2');
-		var paletteColor3 = document.getElementById('paletteColor3');
-		[paletteColor1, paletteColor2, paletteColor3].forEach(function (element) {
+		const paletteColor1 = document.getElementById('paletteColor1');
+		const paletteColor2 = document.getElementById('paletteColor2');
+		const paletteColor3 = document.getElementById('paletteColor3');
+		[paletteColor1, paletteColor2, paletteColor3].forEach(element => {
 			element.addEventListener('input', updatePalette);
 		});
 		function updatePalette() {
