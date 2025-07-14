@@ -4,6 +4,8 @@
  https://github.com/iosphere/Leaflet.hotline/
 */
 
+import {Canvas, LatLng, LineUtil, Polyline} from 'leaflet';
+
 class Hotline {
 
 	/**
@@ -239,7 +241,7 @@ class Hotline {
 	}
 }
 
-class Renderer extends L.Canvas {
+class Renderer extends Canvas {
 
 	constructor(...args) {
 		super(...args);
@@ -305,8 +307,8 @@ var Util = {
 	 * @see {@link http://leafletjs.com/reference.html#lineutil-clipsegment|Leaflet}
 	 */
 	clipSegment: function (a, b, bounds, useLastCode, round) {
-		let codeA = useLastCode ? this._lastCode : L.LineUtil._getBitCode(a, bounds),
-			codeB = L.LineUtil._getBitCode(b, bounds),
+		let codeA = useLastCode ? this._lastCode : LineUtil._getBitCode(a, bounds),
+			codeB = LineUtil._getBitCode(b, bounds),
 
 			codeOut, p, newCode;
 
@@ -326,8 +328,8 @@ var Util = {
 
 			// other cases
 			codeOut = codeA || codeB;
-			p = L.LineUtil._getEdgeIntersection(a, b, codeOut, bounds, round);
-			newCode = L.LineUtil._getBitCode(p, bounds);
+			p = LineUtil._getEdgeIntersection(a, b, codeOut, bounds, round);
+			newCode = LineUtil._getBitCode(p, bounds);
 
 			if (codeOut === codeA) {
 				p.z = a.z;
@@ -342,7 +344,7 @@ var Util = {
 	}
 };
 
-L.Hotline = class extends L.Polyline {
+L.Hotline = class extends Polyline {
 
 	constructor(latlngs, options = {}) {
 		super(latlngs, {
@@ -369,7 +371,7 @@ L.Hotline = class extends L.Polyline {
 	 * Just like the Leaflet version, but with support for a z coordinate.
 	 */
 	_projectLatlngs(latlngs, result, projectedBounds) {
-		const flat = latlngs[0] instanceof L.LatLng;
+		const flat = latlngs[0] instanceof LatLng;
 
 		if (flat) {
 			const ring = latlngs.map(latlng => {
