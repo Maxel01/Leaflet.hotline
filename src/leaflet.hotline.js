@@ -266,19 +266,20 @@
 	};
 
 
-	var Renderer = L.Canvas.extend({
-		_initContainer: function () {
+	const Renderer = class extends L.Canvas {
+
+		_initContainer() {
 			L.Canvas.prototype._initContainer.call(this);
 			this._hotline = new Hotline(this._container);
-		},
+		}
 
-		_update: function () {
+		_update() {
 			L.Canvas.prototype._update.call(this);
 			this._hotline.width(this._container.width);
 			this._hotline.height(this._container.height);
-		},
+		}
 
-		_updatePoly: function (layer) {
+		_updatePoly(layer) {
 			if (!this._drawing) { return; }
 
 			var parts = layer._parts;
@@ -290,9 +291,9 @@
 			this._hotline
 				.data(parts)
 				.draw();
-		},
+		}
 
-		_updateOptions: function (layer) {
+		_updateOptions(layer) {
 			if (layer.options.min != null) {
 				this._hotline.min(layer.options.min);
 			}
@@ -312,11 +313,11 @@
 				this._hotline.palette(layer.options.palette);
 			}
 		}
-	});
+	}
 
 	var renderer = function (options) {
 		return L.Browser.canvas ? new Renderer(options) : null;
-	};
+	}
 
 
 	var Util = {
