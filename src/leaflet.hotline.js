@@ -262,15 +262,20 @@
 		}
 	}
 
-	const Renderer = class extends L.Canvas {
+	class Renderer extends L.Canvas {
+
+		constructor(...args) {
+			super(...args);
+			this._hotline = null;
+		}
 
 		_initContainer() {
-			L.Canvas.prototype._initContainer.call(this);
+			super._initContainer();
 			this._hotline = new Hotline(this._container);
 		}
 
 		_update() {
-			L.Canvas.prototype._update.call(this);
+			super._update();
 			this._hotline.width(this._container.width);
 			this._hotline.height(this._container.height);
 		}
@@ -279,7 +284,6 @@
 			if (!this._drawing) { return; }
 
 			const parts = layer._parts;
-
 			if (!parts.length) { return; }
 
 			this._updateOptions(layer);
