@@ -2,10 +2,16 @@
 <head>
 	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 	<title>Leaflet.Hotline Demo</title>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+	<script type="importmap">
+		{
+            "imports": {
+                "leaflet": "./leaflet.js"
+            }
+        }
+	</script>
 	<script src="js/coords.js"></script>
-	<script src="../dist/leaflet.hotline.js"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+	<!--script src="../dist/leaflet.hotline.js"></script-->
+	<link rel="stylesheet" href="leaflet.css" />
 	<style>
 		header,
 		section {
@@ -94,17 +100,19 @@
 			</label>
 		</aside>
 	</section>
-	<script>
-		const tiles = L.tileLayer('//{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	<script type="module">
+		import {Map, TileLayer} from 'leaflet';
+		const tiles = new TileLayer('//{s}.tile.osm.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
 		});
-		const map = L.map('map', {
+		const map = new Map('map', {
 			layers: [tiles],
 			scrollWheelZoom: false,
 			dragging: false,
 			tap: false
 		});
-		const hotlineLayer = L.hotline(coords, {
+
+		const hotlineLayer = new Hotline(coords, {
 			min: 150,
 			max: 350,
 			palette: {
