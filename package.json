@@ -2,14 +2,17 @@
   "name": "leaflet-hotline",
   "version": "0.4.0",
   "description": "A Leaflet plugin for drawing colored gradients along a polyline",
+  "type": "module",
   "main": "src/leaflet.hotline.js",
   "scripts": {
     "test": "npm run lint",
     "lint": "eslint src/leaflet.hotline.js",
-    "clean": "rm -rf dist",
+    "clean-linux": "rm -rf dist",
+    "clean": "rmdir /s /q dist",
     "beautify": "uglifyjs src/leaflet.hotline.js -b --comments /iosphere/ > dist/leaflet.hotline.js",
     "minify": "uglifyjs src/leaflet.hotline.js -c -m --comments /iosphere/ > dist/leaflet.hotline.min.js",
-    "prebuild": "npm run clean && mkdir -p dist",
+    "prebuild-linux": "npm run clean && mkdir -p dist",
+    "prebuild": "npm run clean && if not exist dist mkdir dist",
     "build": "npm run test && npm run beautify && npm run minify"
   },
   "repository": {
@@ -34,7 +37,7 @@
   },
   "homepage": "https://iosphere.github.io/Leaflet.hotline/demo/",
   "devDependencies": {
-    "eslint": "^0.23.0",
-    "uglify-js": "^2.4.23"
+    "eslint": "^9.31.0",
+    "uglify-js": "^3.19.3"
   }
 }
