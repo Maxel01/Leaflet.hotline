@@ -359,35 +359,33 @@
 		}
 	};
 
+	L.Hotline = class extends L.Polyline {
 
-	L.Hotline = L.Polyline.extend({
-		statics: {
-			Renderer: Renderer,
-			renderer: renderer
-		},
+		constructor(latlngs, options = {}) {
+			super(latlngs, {
+				renderer: renderer(),
+				min: 0,
+				max: 1,
+				palette: {
+					0.0: 'green',
+					0.5: 'yellow',
+					1.0: 'red'
+				},
+				weight: 5,
+				outlineColor: 'black',
+				outlineWidth: 1,
+				...options
+			});
+		}
 
-		options: {
-			renderer: renderer(),
-			min: 0,
-			max: 1,
-			palette: {
-				0.0: 'green',
-				0.5: 'yellow',
-				1.0: 'red'
-			},
-			weight: 5,
-			outlineColor: 'black',
-			outlineWidth: 1
-		},
-
-		getRGBForValue: function (value) {
+		getRGBForValue(value) {
 			return this._renderer._hotline.getRGBForValue(value);
-		},
+		}
 
 		/**
 		 * Just like the Leaflet version, but with support for a z coordinate.
 		 */
-		_projectLatlngs: function (latlngs, result, projectedBounds) {
+		_projectLatlngs(latlngs, result, projectedBounds) {
 			var flat = latlngs[0] instanceof L.LatLng,
 					len = latlngs.length,
 					i, ring;
@@ -406,12 +404,12 @@
 					this._projectLatlngs(latlngs[i], result, projectedBounds);
 				}
 			}
-		},
+		}
 
 		/**
 		 * Just like the Leaflet version, but uses `Util.clipSegment()`.
 		 */
-		_clipPoints: function () {
+		_clipPoints() {
 			if (this.options.noClip) {
 				this._parts = this._rings;
 				return;
@@ -441,12 +439,12 @@
 					}
 				}
 			}
-		},
+		}
 
-		_clickTolerance: function () {
+		_clickTolerance() {
 			return this.options.weight / 2 + this.options.outlineWidth + (L.Browser.touch ? 10 : 0);
 		}
-	});
+	}
 
 	L.hotline = function (latlngs, options) {
 		return new L.Hotline(latlngs, options);
