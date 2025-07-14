@@ -15,49 +15,45 @@
     if (L.Hotline) {
         return L;
     }
-    var Hotline = function(canvas) {
-        if (!(this instanceof Hotline)) {
-            return new Hotline(canvas);
+    class Hotline {
+        constructor(canvas) {
+            this._canvas = canvas = typeof canvas === "string" ? document.getElementById(canvas) : canvas;
+            this._ctx = canvas.getContext("2d");
+            this._width = canvas.width;
+            this._height = canvas.height;
+            this._weight = 5;
+            this._outlineWidth = 1;
+            this._outlineColor = "black";
+            this._min = 0;
+            this._max = 1;
+            this._data = [];
+            this.palette({
+                0: "green",
+                .5: "yellow",
+                1: "red"
+            });
         }
-        var defaultPalette = {
-            0: "green",
-            .5: "yellow",
-            1: "red"
-        };
-        this._canvas = canvas = typeof canvas === "string" ? document.getElementById(canvas) : canvas;
-        this._ctx = canvas.getContext("2d");
-        this._width = canvas.width;
-        this._height = canvas.height;
-        this._weight = 5;
-        this._outlineWidth = 1;
-        this._outlineColor = "black";
-        this._min = 0;
-        this._max = 1;
-        this._data = [];
-        this.palette(defaultPalette);
-    };
-    Hotline.prototype = {
-        width: function(width) {
+        width(width) {
             this._width = width;
             return this;
-        },
-        height: function(height) {
+        }
+        height(height) {
             this._height = height;
             return this;
-        },
-        weight: function(weight) {
+        }
+        weight(weight) {
             this._weight = weight;
             return this;
-        },
-        outlineWidth: function(outlineWidth) {
+        }
+        outlineWidth(outlineWidth) {
             this._outlineWidth = outlineWidth;
             return this;
-        },
-        outlineColor: function(outlineColor) {
+        }
+        outlineColor(outlineColor) {
             this._outlineColor = outlineColor;
             return this;
-        },
-        palette: function(palette) {
+        }
+        palette(palette) {
             var canvas = document.createElement("canvas"), ctx = canvas.getContext("2d"), gradient = ctx.createLinearGradient(0, 0, 0, 256);
             canvas.width = 1;
             canvas.height = 256;
@@ -68,37 +64,37 @@
             ctx.fillRect(0, 0, 1, 256);
             this._palette = ctx.getImageData(0, 0, 1, 256).data;
             return this;
-        },
-        min: function(min) {
+        }
+        min(min) {
             this._min = min;
             return this;
-        },
-        max: function(max) {
+        }
+        max(max) {
             this._max = max;
             return this;
-        },
-        data: function(data) {
+        }
+        data(data) {
             this._data = data;
             return this;
-        },
-        add: function(path) {
+        }
+        add(path) {
             this._data.push(path);
             return this;
-        },
-        draw: function() {
+        }
+        draw() {
             var ctx = this._ctx;
             ctx.globalCompositeOperation = "source-over";
             ctx.lineCap = "round";
             this._drawOutline(ctx);
             this._drawHotline(ctx);
             return this;
-        },
-        getRGBForValue: function(value) {
+        }
+        getRGBForValue(value) {
             var valueRelative = Math.min(Math.max((value - this._min) / (this._max - this._min), 0), .999);
             var paletteIndex = Math.floor(valueRelative * 256) * 4;
             return [ this._palette[paletteIndex], this._palette[paletteIndex + 1], this._palette[paletteIndex + 2] ];
-        },
-        _drawOutline: function(ctx) {
+        }
+        _drawOutline(ctx) {
             var i, j, dataLength, path, pathLength, pointStart, pointEnd;
             if (this._outlineWidth) {
                 for (i = 0, dataLength = this._data.length; i < dataLength; i++) {
@@ -115,8 +111,8 @@
                     }
                 }
             }
-        },
-        _drawHotline: function(ctx) {
+        }
+        _drawHotline(ctx) {
             var i, j, dataLength, path, pathLength, pointStart, pointEnd, gradient, gradientStartRGB, gradientEndRGB;
             ctx.lineWidth = this._weight;
             for (i = 0, dataLength = this._data.length; i < dataLength; i++) {
@@ -137,7 +133,8 @@
                 }
             }
         }
-    };
+    }
+    Hotline.prototype = {};
     const Renderer = class extends L.Canvas {
         _initContainer() {
             L.Canvas.prototype._initContainer.call(this);

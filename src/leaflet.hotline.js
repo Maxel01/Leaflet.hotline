@@ -27,93 +27,90 @@
 		return L;
 	}
 
-	/**
-	 * Core renderer.
-	 * @constructor
-	 * @param {HTMLElement | string} canvas - &lt;canvas> element or its id
-	 * to initialize the instance on.
-	 */
-	var Hotline = function (canvas) {
-		if (!(this instanceof Hotline)) { return new Hotline(canvas); }
+	class Hotline {
 
-		var defaultPalette = {
-			0.0: 'green',
-			0.5: 'yellow',
-			1.0: 'red'
-		};
+		/**
+		 * Core renderer.
+		 * @constructor
+		 * @param {HTMLElement | string} canvas - &lt;canvas> element or its id
+		 * to initialize the instance on.
+		 */
+		constructor(canvas) {
+			this._canvas = canvas = typeof canvas === 'string'
+				? document.getElementById(canvas)
+				: canvas;
 
-		this._canvas = canvas = typeof canvas === 'string'
-			? document.getElementById(canvas)
-			: canvas;
+			this._ctx = canvas.getContext('2d');
+			this._width = canvas.width;
+			this._height = canvas.height;
 
-		this._ctx = canvas.getContext('2d');
-		this._width = canvas.width;
-		this._height = canvas.height;
+			this._weight = 5;
+			this._outlineWidth = 1;
+			this._outlineColor = 'black';
 
-		this._weight = 5;
-		this._outlineWidth = 1;
-		this._outlineColor = 'black';
+			this._min = 0;
+			this._max = 1;
 
-		this._min = 0;
-		this._max = 1;
+			this._data = [];
 
-		this._data = [];
+			this.palette({
+				0.0: 'green',
+				0.5: 'yellow',
+				1.0: 'red'
+			});
+		}
 
-		this.palette(defaultPalette);
-	};
-
-	Hotline.prototype = {
 		/**
 		 * Sets the width of the canvas. Used when clearing the canvas.
 		 * @param {number} width - Width of the canvas.
 		 */
-		width: function (width) {
+		width(width) {
 			this._width = width;
 			return this;
-		},
+		}
 
 		/**
 		 * Sets the height of the canvas. Used when clearing the canvas.
 		 * @param {number} height - Height of the canvas.
 		 */
-		height: function (height) {
+		height(height) {
 			this._height = height;
 			return this;
-		},
+		}
 
 		/**
 		 * Sets the weight of the path.
 		 * @param {number} weight - Weight of the path in px.
 		 */
-		weight: function (weight) {
+		weight(weight) {
 			this._weight = weight;
 			return this;
-		},
+		}
 
 		/**
 		 * Sets the width of the outline around the path.
 		 * @param {number} outlineWidth - Width of the outline in px.
 		 */
-		outlineWidth: function (outlineWidth) {
+		outlineWidth(outlineWidth) {
 			this._outlineWidth = outlineWidth;
 			return this;
-		},
+		}
 
 		/**
 		 * Sets the color of the outline around the path.
 		 * @param {string} outlineColor - A CSS color value.
 		 */
-		outlineColor: function (outlineColor) {
+		outlineColor(outlineColor) {
 			this._outlineColor = outlineColor;
 			return this;
-		},
+		}
 
 		/**
 		 * Sets the palette gradient.
 		 * @param {Object.<number, string>} palette  - Gradient definition.
 		 * e.g. { 0.0: 'white', 1.0: 'black' }
 		 */
-		palette: function (palette) {
+		palette(palette) {
 			var canvas = document.createElement('canvas'),
 					ctx = canvas.getContext('2d'),
 					gradient = ctx.createLinearGradient(0, 0, 0, 256);
@@ -131,25 +128,25 @@
 			this._palette = ctx.getImageData(0, 0, 1, 256).data;
 
 			return this;
-		},
+		}
 
 		/**
 		 * Sets the value used at the start of the palette gradient.
 		 * @param {number} min
 		 */
-		min: function (min) {
+		min(min) {
 			this._min = min;
 			return this;
-		},
+		}
 
 		/**
 		 * Sets the value used at the end of the palette gradient.
 		 * @param {number} max
 		 */
-		max: function (max) {
+		max(max) {
 			this._max = max;
 			return this;
-		},
+		}
 
 		/**
 		 * A path to rander as a hotline.
@@ -160,24 +157,24 @@
 		 * Sets the data that gets drawn on the canvas.
 		 * @param {(Path|Path[])} data - A single path or an array of paths.
 		 */
-		data: function (data) {
+		data(data) {
 			this._data = data;
 			return this;
-		},
+		}
 
 		/**
 		 * Adds a path to the list of paths.
 		 * @param {Path} path
 		 */
-		add: function (path) {
+		add(path) {
 			this._data.push(path);
 			return this;
-		},
+		}
 
 		/**
 		 * Draws the currently set paths.
 		 */
-		draw: function () {
+		draw() {
 			var ctx = this._ctx;
 
 			ctx.globalCompositeOperation = 'source-over';
@@ -187,14 +184,14 @@
 			this._drawHotline(ctx);
 
 			return this;
-		},
+		}
 
 		/**
 		 * Gets the RGB values of a given z value of the current palette.
 		 * @param {number} value - Value to get the color for, should be between min and max.
 		 * @returns {Array.<number>} The RGB values as an array [r, g, b]
 		 */
-		getRGBForValue: function (value) {
+		getRGBForValue(value) {
 			var valueRelative = Math.min(Math.max((value - this._min) / (this._max - this._min), 0), 0.999);
 			var paletteIndex = Math.floor(valueRelative * 256) * 4;
 
@@ -203,13 +200,13 @@
 				this._palette[paletteIndex + 1],
 				this._palette[paletteIndex + 2]
 			];
-		},
+		}
 
 		/**
 		 * Draws the outline of the graphs.
 		 * @private
 		 */
-		_drawOutline: function (ctx) {
+		_drawOutline(ctx) {
 			var i, j, dataLength, path, pathLength, pointStart, pointEnd;
 
 			if (this._outlineWidth) {
@@ -229,15 +226,15 @@
 					}
 				}
 			}
-		},
+		}
 
 		/**
 		 * Draws the color encoded hotline of the graphs.
 		 * @private
 		 */
-		_drawHotline: function (ctx) {
+		_drawHotline(ctx) {
 			var i, j, dataLength, path, pathLength, pointStart, pointEnd,
-					gradient, gradientStartRGB, gradientEndRGB;
+				gradient, gradientStartRGB, gradientEndRGB;
 
 			ctx.lineWidth = this._weight;
 
@@ -263,7 +260,9 @@
 				}
 			}
 		}
-	};
+	}
+
+	Hotline.prototype = {};
 
 
 	const Renderer = class extends L.Canvas {
