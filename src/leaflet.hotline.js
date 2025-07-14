@@ -4,29 +4,6 @@
  https://github.com/iosphere/Leaflet.hotline/
 */
 
-(function (root, plugin) {
-	/**
-	 * UMD wrapper.
-	 * When used directly in the Browser it expects Leaflet to be globally
-	 * available as `L`. The plugin then adds itself to Leaflet.
-	 * When used as a CommonJS module (e.g. with browserify) only the plugin
-	 * factory gets exported, so one hast to call the factory manually and pass
-	 * Leaflet as the only parameter.
-	 * @see {@link https://github.com/umdjs/umd}
-	 */
-	if (typeof define === 'function' && define.amd) {
-		define(['leaflet'], plugin);
-	} else if (typeof exports === 'object') {
-		module.exports = plugin;
-	} else {
-		plugin(root.L);
-	}
-}(this, function (L) {
-	// Plugin is already added to Leaflet
-	if (L.Hotline) {
-		return L;
-	}
-
 	class Hotline {
 
 		/**
@@ -443,7 +420,3 @@
 	L.hotline = function (latlngs, options) {
 		return new L.Hotline(latlngs, options);
 	};
-
-
-	return L;
-}));
