@@ -1,4 +1,4 @@
-/*
+/*!
  (c) 2017, iosphere GmbH
  Leaflet.hotline, a Leaflet plugin for drawing gradients along polylines.
  https://github.com/iosphere/Leaflet.hotline/
