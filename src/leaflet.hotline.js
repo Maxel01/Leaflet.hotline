@@ -6,7 +6,7 @@
 
 import {Canvas, LatLng, LineUtil, Polyline} from 'leaflet';
 
-class Hotline {
+class HotlineElement {
 
 	/**
 	 * Core renderer.
@@ -250,7 +250,7 @@ class Renderer extends Canvas {
 
 	_initContainer() {
 		super._initContainer();
-		this._hotline = new Hotline(this._container);
+		this._hotline = new HotlineElement(this._container);
 	}
 
 	_update() {
@@ -345,7 +345,7 @@ var Util = {
 	}
 };
 
-L.Hotline = class extends Polyline {
+export class Hotline extends Polyline {
 
 	constructor(latlngs, options = {}) {
 		super(latlngs, {
@@ -429,6 +429,3 @@ L.Hotline = class extends Polyline {
 	}
 }
 
-L.hotline = function (latlngs, options) {
-	return new L.Hotline(latlngs, options);
-};
