@@ -54,10 +54,10 @@
             return this;
         }
         palette(palette) {
-            var canvas = document.createElement("canvas"), ctx = canvas.getContext("2d"), gradient = ctx.createLinearGradient(0, 0, 0, 256);
+            const canvas = document.createElement("canvas"), ctx = canvas.getContext("2d"), gradient = ctx.createLinearGradient(0, 0, 0, 256);
             canvas.width = 1;
             canvas.height = 256;
-            for (var i in palette) {
+            for (let i in palette) {
                 gradient.addColorStop(i, palette[i]);
             }
             ctx.fillStyle = gradient;
@@ -82,7 +82,7 @@
             return this;
         }
         draw() {
-            var ctx = this._ctx;
+            const ctx = this._ctx;
             ctx.globalCompositeOperation = "source-over";
             ctx.lineCap = "round";
             this._drawOutline(ctx);
@@ -90,12 +90,12 @@
             return this;
         }
         getRGBForValue(value) {
-            var valueRelative = Math.min(Math.max((value - this._min) / (this._max - this._min), 0), .999);
-            var paletteIndex = Math.floor(valueRelative * 256) * 4;
+            const valueRelative = Math.min(Math.max((value - this._min) / (this._max - this._min), 0), .999);
+            const paletteIndex = Math.floor(valueRelative * 256) * 4;
             return [ this._palette[paletteIndex], this._palette[paletteIndex + 1], this._palette[paletteIndex + 2] ];
         }
         _drawOutline(ctx) {
-            var i, j, dataLength, path, pathLength, pointStart, pointEnd;
+            let i, j, dataLength, path, pathLength, pointStart, pointEnd;
             if (this._outlineWidth) {
                 for (i = 0, dataLength = this._data.length; i < dataLength; i++) {
                     path = this._data[i];
@@ -113,7 +113,7 @@
             }
         }
         _drawHotline(ctx) {
-            var i, j, dataLength, path, pathLength, pointStart, pointEnd, gradient, gradientStartRGB, gradientEndRGB;
+            let i, j, dataLength, path, pathLength, pointStart, pointEnd, gradient, gradientStartRGB, gradientEndRGB;
             ctx.lineWidth = this._weight;
             for (i = 0, dataLength = this._data.length; i < dataLength; i++) {
                 path = this._data[i];
@@ -149,7 +149,7 @@
             if (!this._drawing) {
                 return;
             }
-            var parts = layer._parts;
+            const parts = layer._parts;
             if (!parts.length) {
                 return;
             }
@@ -177,31 +177,31 @@
             }
         }
     };
-    var renderer = function(options) {
+    const renderer = function(options) {
         return L.Browser.canvas ? new Renderer(options) : null;
     };
     var Util = {
         clipSegment: function(a, b, bounds, useLastCode, round) {
-            var codeA = useLastCode ? this._lastCode : L.LineUtil._getBitCode(a, bounds), codeB = L.LineUtil._getBitCode(b, bounds), codeOut, p, newCode;
+            let codeA = useLastCode ? this._lastCode : L.LineUtil._getBitCode(a, bounds), codeB = L.LineUtil._getBitCode(b, bounds), codeOut, p, newCode;
             this._lastCode = codeB;
             while (true) {
                 if (!(codeA | codeB)) {
                     return [ a, b ];
-                } else if (codeA & codeB) {
+                }
+                if (codeA & codeB) {
                     return false;
+                }
+                codeOut = codeA || codeB;
+                p = L.LineUtil._getEdgeIntersection(a, b, codeOut, bounds, round);
+                newCode = L.LineUtil._getBitCode(p, bounds);
+                if (codeOut === codeA) {
+                    p.z = a.z;
+                    a = p;
+                    codeA = newCode;
                 } else {
-                    codeOut = codeA || codeB;
-                    p = L.LineUtil._getEdgeIntersection(a, b, codeOut, bounds, round);
-                    newCode = L.LineUtil._getBitCode(p, bounds);
-                    if (codeOut === codeA) {
-                        p.z = a.z;
-                        a = p;
-                        codeA = newCode;
-                    } else {
-                        p.z = b.z;
-                        b = p;
-                        codeB = newCode;
-                    }
+                    p.z = b.z;
+                    b = p;
+                    codeB = newCode;
                 }
             }
         }
@@ -227,19 +227,16 @@
             return this._renderer._hotline.getRGBForValue(value);
         }
         _projectLatlngs(latlngs, result, projectedBounds) {
-            var flat = latlngs[0] instanceof L.LatLng, len = latlngs.length, i, ring;
+            const flat = latlngs[0] instanceof L.LatLng;
             if (flat) {
-                ring = [];
-                for (i = 0; i < len; i++) {
-                    ring[i] = this._map.latLngToLayerPoint(latlngs[i]);
-                    ring[i].z = latlngs[i].alt;
-                    projectedBounds.extend(ring[i]);
-                }
+                const ring = latlngs.map(latlng => {
+                    const point = this._map.latLngToLayerPoint(latlng);
+                    point.z = latlng.alt;
+                    return point;
+                });
                 result.push(ring);
             } else {
-                for (i = 0; i < len; i++) {
-                    this._projectLatlngs(latlngs[i], result, projectedBounds);
-                }
+                latlngs.forEach(latlng => this._projectLatlngs(latlng, result, projectedBounds));
             }
         }
         _clipPoints() {
@@ -248,7 +245,8 @@
                 return;
             }
             this._parts = [];
-            var parts = this._parts, bounds = this._renderer._bounds, i, j, k, len, len2, segment, points;
+            const parts = this._parts, bounds = this._renderer._bounds;
+            let i, j, k, len, len2, segment, points;
             for (i = 0, k = 0, len = this._rings.length; i < len; i++) {
                 points = this._rings[i];
                 for (j = 0, len2 = points.length; j < len2 - 1; j++) {

@@ -325,9 +325,10 @@
 		 * @see {@link http://leafletjs.com/reference.html#lineutil-clipsegment|Leaflet}
 		 */
 		clipSegment: function (a, b, bounds, useLastCode, round) {
-			var codeA = useLastCode ? this._lastCode : L.LineUtil._getBitCode(a, bounds),
-					codeB = L.LineUtil._getBitCode(b, bounds),
-					codeOut, p, newCode;
+			let codeA = useLastCode ? this._lastCode : L.LineUtil._getBitCode(a, bounds),
+				codeB = L.LineUtil._getBitCode(b, bounds),
+
+				codeOut, p, newCode;
 
 			// save 2nd code to avoid calculating it on the next segment
 			this._lastCode = codeB;
@@ -336,24 +337,26 @@
 				// if a,b is inside the clip window (trivial accept)
 				if (!(codeA | codeB)) {
 					return [a, b];
-				// if a,b is outside the clip window (trivial reject)
-				} else if (codeA & codeB) {
-					return false;
-				// other cases
-				} else {
-					codeOut = codeA || codeB;
-					p = L.LineUtil._getEdgeIntersection(a, b, codeOut, bounds, round);
-					newCode = L.LineUtil._getBitCode(p, bounds);
+				}
 
-					if (codeOut === codeA) {
-						p.z = a.z;
-						a = p;
-						codeA = newCode;
-					} else {
-						p.z = b.z;
-						b = p;
-						codeB = newCode;
-					}
+				// if a,b is outside the clip window (trivial reject)
+				if (codeA & codeB) {
+					return false;
+				}
+
+				// other cases
+				codeOut = codeA || codeB;
+				p = L.LineUtil._getEdgeIntersection(a, b, codeOut, bounds, round);
+				newCode = L.LineUtil._getBitCode(p, bounds);
+
+				if (codeOut === codeA) {
+					p.z = a.z;
+					a = p;
+					codeA = newCode;
+				} else {
+					p.z = b.z;
+					b = p;
+					codeB = newCode;
 				}
 			}
 		}
@@ -386,23 +389,17 @@
 		 * Just like the Leaflet version, but with support for a z coordinate.
 		 */
 		_projectLatlngs(latlngs, result, projectedBounds) {
-			var flat = latlngs[0] instanceof L.LatLng,
-					len = latlngs.length,
-					i, ring;
+			const flat = latlngs[0] instanceof L.LatLng;
 
 			if (flat) {
-				ring = [];
-				for (i = 0; i < len; i++) {
-					ring[i] = this._map.latLngToLayerPoint(latlngs[i]);
-					// Add the altitude of the latLng as the z coordinate to the point
-					ring[i].z = latlngs[i].alt;
-					projectedBounds.extend(ring[i]);
-				}
+				const ring = latlngs.map(latlng => {
+					const point = this._map.latLngToLayerPoint(latlng)
+					point.z = latlng.alt;
+					return point
+				})
 				result.push(ring);
 			} else {
-				for (i = 0; i < len; i++) {
-					this._projectLatlngs(latlngs[i], result, projectedBounds);
-				}
+				latlngs.forEach(latlng => this._projectLatlngs(latlng, result, projectedBounds));
 			}
 		}
 
@@ -417,9 +414,9 @@
 
 			this._parts = [];
 
-			var parts = this._parts,
-					bounds = this._renderer._bounds,
-					i, j, k, len, len2, segment, points;
+			const parts = this._parts,
+				  bounds = this._renderer._bounds;
+			let i, j, k, len, len2, segment, points;
 
 			for (i = 0, k = 0, len = this._rings.length; i < len; i++) {
 				points = this._rings[i];
