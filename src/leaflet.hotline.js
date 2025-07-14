@@ -111,14 +111,14 @@
 		 * e.g. { 0.0: 'white', 1.0: 'black' }
 		 */
 		palette(palette) {
-			var canvas = document.createElement('canvas'),
+			const canvas = document.createElement('canvas'),
 					ctx = canvas.getContext('2d'),
 					gradient = ctx.createLinearGradient(0, 0, 0, 256);
 
 			canvas.width = 1;
 			canvas.height = 256;
 
-			for (var i in palette) {
+			for (let i in palette) {
 				gradient.addColorStop(i, palette[i]);
 			}
 
@@ -175,7 +175,7 @@
 		 * Draws the currently set paths.
 		 */
 		draw() {
-			var ctx = this._ctx;
+			const ctx = this._ctx;
 
 			ctx.globalCompositeOperation = 'source-over';
 			ctx.lineCap = 'round';
@@ -192,8 +192,8 @@
 		 * @returns {Array.<number>} The RGB values as an array [r, g, b]
 		 */
 		getRGBForValue(value) {
-			var valueRelative = Math.min(Math.max((value - this._min) / (this._max - this._min), 0), 0.999);
-			var paletteIndex = Math.floor(valueRelative * 256) * 4;
+			const valueRelative = Math.min(Math.max((value - this._min) / (this._max - this._min), 0), 0.999);
+			const paletteIndex = Math.floor(valueRelative * 256) * 4;
 
 			return [
 				this._palette[paletteIndex],
@@ -207,7 +207,7 @@
 		 * @private
 		 */
 		_drawOutline(ctx) {
-			var i, j, dataLength, path, pathLength, pointStart, pointEnd;
+			let i, j, dataLength, path, pathLength, pointStart, pointEnd;
 
 			if (this._outlineWidth) {
 				for (i = 0, dataLength = this._data.length; i < dataLength; i++) {
@@ -233,7 +233,7 @@
 		 * @private
 		 */
 		_drawHotline(ctx) {
-			var i, j, dataLength, path, pathLength, pointStart, pointEnd,
+			let i, j, dataLength, path, pathLength, pointStart, pointEnd,
 				gradient, gradientStartRGB, gradientEndRGB;
 
 			ctx.lineWidth = this._weight;
@@ -281,7 +281,7 @@
 		_updatePoly(layer) {
 			if (!this._drawing) { return; }
 
-			var parts = layer._parts;
+			const parts = layer._parts;
 
 			if (!parts.length) { return; }
 
@@ -314,7 +314,7 @@
 		}
 	}
 
-	var renderer = function (options) {
+	const renderer = function (options) {
 		return L.Browser.canvas ? new Renderer(options) : null;
 	}
 
