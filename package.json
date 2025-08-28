@@ -40,9 +40,14 @@
   "devDependencies": {
     "eslint": "^9.31.0",
     "rollup": "^2.79.2",
-    "rollup-plugin-terser": "^7.0.2"
+    "rollup-plugin-terser": "^7.0.2",
+    "@types/leaflet": "^1.9.20"
   },
   "peerDependencies": {
     "leaflet": "^2.0.0-alpha"
+  },
+  "dependencies": {
+    "tsc": "^2.0.4",
+    "typescript": "^5.9.2"
   }
 }
