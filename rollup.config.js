@@ -1,19 +1,14 @@
-import { terser } from 'rollup-plugin-terser';
+import typescript from '@rollup/plugin-typescript';
 
 export default [
 	{
-		input: 'src/leaflet.hotline.js',
+        plugins: [typescript()],
+		input: 'src/leaflet.hotline.ts',
 		output: [
 			{
 				file: 'dist/leaflet.hotline.js',
 				format: 'esm',
 				sourcemap: true
-			},
-			{
-				file: 'dist/leaflet.hotline.min.js',
-				format: 'esm',
-				sourcemap: true,
-				plugins: [terser()]
 			}
 		]
 	}
