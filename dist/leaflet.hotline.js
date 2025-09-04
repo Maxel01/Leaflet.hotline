@@ -1,5 +1,12 @@
-import { Polyline, LatLng, LineUtil, Canvas } from 'leaflet';
+import { Point, Polyline, LatLng, LineUtil, Canvas } from 'leaflet';
 
+class Point3D extends Point {
+    z;
+    constructor(x, y, z, round) {
+        super(x, y, round);
+        this.z = z;
+    }
+}
 class HotlinePalette {
     _palette;
     constructor() {
@@ -228,5 +235,5 @@ class Hotline extends Polyline {
     }
 }
 
-export { Hotline };
+export { Hotline, Point3D };
 //# sourceMappingURL=leaflet.hotline.js.map

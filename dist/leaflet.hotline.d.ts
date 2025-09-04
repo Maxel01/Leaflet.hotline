@@ -5,18 +5,13 @@ declare module 'leaflet' {
         function _getEdgeIntersection(a: Point, b: Point, code: number, bounds: Bounds, round: boolean | undefined): Point;
     }
 }
-declare class Point3D extends Point {
+export declare class Point3D extends Point {
     z?: number | undefined;
     constructor(x: number, y: number, z?: number, round?: boolean);
 }
-type ColorPalette = {
+export type ColorPalette = {
     [value: number]: string;
 };
-declare module 'leaflet' {
-    interface LineUtil {
-        _getBitCode(point: Point, bounds: Bounds): number;
-    }
-}
 declare class HotlineCanvasRenderer extends Canvas {
     private _palette;
     _drawing: boolean;
@@ -39,7 +34,7 @@ declare class HotlineCanvasRenderer extends Canvas {
      */
     _drawHotline(parts: Point3D[][], options: HotlineOptions): void;
 }
-interface HotlineOptions extends PolylineOptions {
+export interface HotlineOptions extends PolylineOptions {
     renderer: HotlineCanvasRenderer;
     weight: number;
     outlineWidth: number;

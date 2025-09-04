@@ -18,7 +18,7 @@ declare module 'leaflet' {
     }
 }
 
-class Point3D extends Point {
+export class Point3D extends Point {
     z?: number | undefined;
 
     constructor(x: number, y: number, z?: number, round?: boolean) {
@@ -27,7 +27,7 @@ class Point3D extends Point {
     }
 }
 
-type ColorPalette = {
+export type ColorPalette = {
     [value: number]: string
 }
 
@@ -80,13 +80,6 @@ class HotlinePalette {
         ];
     }
 }
-
-declare module 'leaflet' {
-    interface LineUtil {
-        _getBitCode(point: Point, bounds: Bounds): number;
-    }
-}
-
 
 const HotlineUtil = {
     _lastCode: undefined as number | undefined,
@@ -224,7 +217,7 @@ class HotlineCanvasRenderer extends Canvas {
     }
 }
 
-interface HotlineOptions extends PolylineOptions {
+export interface HotlineOptions extends PolylineOptions {
     renderer: HotlineCanvasRenderer,
     weight: number,
     outlineWidth: number,
