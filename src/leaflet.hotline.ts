@@ -1,5 +1,31 @@
-// A utility class to manage the color palette.
-import {Bounds, Canvas, LatLng, LineUtil, Map, Point, Polyline, type PolylineOptions} from "leaflet";
+import {
+    type Bounds,
+    Canvas,
+    LatLng,
+    type LatLngExpression,
+    LineUtil,
+    type Map,
+    Point,
+    Polyline,
+    type PolylineOptions
+} from "leaflet";
+
+declare module 'leaflet' {
+    namespace LineUtil {
+        function _getBitCode(point: Point, bounds: Bounds): number;
+
+        function _getEdgeIntersection(a: Point, b: Point, code: number, bounds: Bounds, round: boolean | undefined): Point;
+    }
+}
+
+class Point3D extends Point {
+    z?: number | undefined;
+
+    constructor(x: number, y: number, z?: number, round?: boolean) {
+        super(x, y, round);
+        this.z = z;
+    }
+}
 
 type ColorPalette = {
     [value: number]: string
@@ -42,7 +68,8 @@ class HotlinePalette {
      * @param max
      * @returns {Array.<number>} The RGB values as an array [r, g, b]
      */
-    getRGBForValue(value: number, min: number, max: number): number[] {
+    getRGBForValue(value: number | undefined, min: number, max: number): number[] {
+        if(value === undefined) value = min
         const valueRelative = Math.min(Math.max((value - min) / (max - min), 0), 0.999);
         const paletteIndex = Math.floor(valueRelative * 256) * 4;
         if (!this._palette) return []
@@ -62,12 +89,12 @@ declare module 'leaflet' {
 
 
 const HotlineUtil = {
-    _lastCode: undefined,
+    _lastCode: undefined as number | undefined,
     /**
      * This is just a copy of the original Leaflet version that support a third z coordinate.
      * @see {@link http://leafletjs.com/reference.html#lineutil-clipsegment|Leaflet}
      */
-    clipSegment: function (a: Point, b: Point, bounds: Bounds, useLastCode?: boolean, round?: boolean) {
+    clipSegment: function (a: Point3D, b: Point3D, bounds: Bounds, useLastCode?: boolean | number, round?: boolean): Point[] | false {
         let codeA = useLastCode ? this._lastCode : LineUtil._getBitCode(a, bounds),
             codeB = LineUtil._getBitCode(b, bounds),
             codeOut, p, newCode;
@@ -77,18 +104,18 @@ const HotlineUtil = {
 
         while (true) {
             // if a,b is inside the clip window (trivial accept)
-            if (!(codeA | codeB)) {
+            if (!(codeA! | codeB)) {
                 return [a, b];
             }
 
             // if a,b is outside the clip window (trivial reject)
-            if (codeA & codeB) {
+            if (codeA! & codeB) {
                 return false;
             }
 
             // other cases
             codeOut = codeA || codeB;
-            p = LineUtil._getEdgeIntersection(a, b, codeOut, bounds, round);
+            p = LineUtil._getEdgeIntersection(a, b, codeOut, bounds, round) as Point3D;
             newCode = LineUtil._getBitCode(p, bounds);
 
             if (codeOut === codeA) {
@@ -108,6 +135,7 @@ class HotlineCanvasRenderer extends Canvas {
     private _palette: HotlinePalette
     declare _drawing: boolean;
     declare _ctx: CanvasRenderingContext2D;
+    declare _bounds: Bounds;
 
     constructor(options: HotlineOptions) {
         super(options);
@@ -171,7 +199,7 @@ class HotlineCanvasRenderer extends Canvas {
      * Draws the color encoded hotline of the graphs.
      * @private
      */
-    _drawHotline(parts: Point[][], options: HotlineOptions) {
+    _drawHotline(parts: Point3D[][], options: HotlineOptions) {
         const ctx: CanvasRenderingContext2D = this._ctx;
         ctx.lineWidth = options.weight;
         for (const path of parts) {
@@ -225,7 +253,7 @@ export class Hotline extends Polyline {
         }
     }
 
-    constructor(latlngs, options?: HotlineOptions) {
+    constructor(latlngs: LatLngExpression[] | LatLngExpression[][], options?: HotlineOptions) {
         super(latlngs, {...(Hotline.defaultOptions), ...options});
     }
 
@@ -237,18 +265,18 @@ export class Hotline extends Polyline {
     /**
      * Just like the Leaflet version, but with support for a z coordinate.
      */
-    _projectLatlngs(latlngs, result, projectedBounds) {
+    _projectLatlngs(latlngs: LatLng[] | LatLng[][], result: Point[][], projectedBounds: Bounds) {
         const flat = latlngs[0] instanceof LatLng;
 
         if (flat) {
-            const ring = latlngs.map(latlng => {
-                const point = this._map.latLngToLayerPoint(latlng)
+            const ring = (latlngs as LatLng[]).map(latlng => {
+                const point = this._map.latLngToLayerPoint(latlng) as Point3D
                 point.z = latlng.alt;
                 return point
             })
             result.push(ring);
         } else {
-            latlngs.forEach(latlng => this._projectLatlngs(latlng, result, projectedBounds));
+            (latlngs as LatLng[][]).forEach(latlng => this._projectLatlngs(latlng, result, projectedBounds));
         }
     }
 
@@ -268,21 +296,21 @@ export class Hotline extends Polyline {
         let i, j, k, len, len2, segment, points;
 
         for (i = 0, k = 0, len = this._rings.length; i < len; i++) {
-            points = this._rings[i];
+            points = this._rings[i] as Point[];
 
             for (j = 0, len2 = points.length; j < len2 - 1; j++) {
-                segment = HotlineUtil.clipSegment(points[j], points[j + 1], bounds, j, true);
+                segment = HotlineUtil.clipSegment(points[j]!, points[j + 1]!, bounds, j, true);
 
                 if (!segment) {
                     continue;
                 }
 
                 parts[k] = parts[k] || [];
-                parts[k].push(segment[0]);
+                parts[k]!.push(segment[0]!);
 
                 // if segment goes out of screen, or it's the last one, it's the end of the line part
                 if ((segment[1] !== points[j + 1]) || (j === len2 - 2)) {
-                    parts[k].push(segment[1]);
+                    parts[k]!.push(segment[1]!);
                     k++;
                 }
             }
