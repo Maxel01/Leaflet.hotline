@@ -35,13 +35,13 @@ declare class HotlineCanvasRenderer extends Canvas {
     _drawHotline(parts: Point3D[][], options: HotlineOptions): void;
 }
 export interface HotlineOptions extends PolylineOptions {
-    renderer: HotlineCanvasRenderer;
-    weight: number;
-    outlineWidth: number;
-    outlineColor: string;
-    min: number;
-    max: number;
-    palette: ColorPalette;
+    renderer?: HotlineCanvasRenderer;
+    weight?: number;
+    outlineWidth?: number;
+    outlineColor?: string;
+    min?: number;
+    max?: number;
+    palette?: ColorPalette;
 }
 export declare class Hotline extends Polyline {
     options: HotlineOptions;

@@ -147,7 +147,7 @@ class HotlineCanvasRenderer extends Canvas {
 
         const options: HotlineOptions = layer.options;
 
-        this._palette.palette(options.palette);
+        this._palette.palette(options.palette!);
         this._ctx.lineCap = 'round';
 
         this.draw(parts, options)
@@ -173,8 +173,8 @@ class HotlineCanvasRenderer extends Canvas {
     _drawOutline(parts: Point[][], options: HotlineOptions) {
         const ctx: CanvasRenderingContext2D = this._ctx;
         if (options.outlineWidth) {
-            ctx.lineWidth = options.weight + 2 * options.outlineWidth;
-            ctx.strokeStyle = options.outlineColor;
+            ctx.lineWidth = options.weight! + 2 * options.outlineWidth;
+            ctx.strokeStyle = options.outlineColor!;
             for (const path of parts) {
                 for (let j = 1; j < path.length; j++) {
                     const pointStart = path[j - 1]!;
@@ -194,7 +194,7 @@ class HotlineCanvasRenderer extends Canvas {
      */
     _drawHotline(parts: Point3D[][], options: HotlineOptions) {
         const ctx: CanvasRenderingContext2D = this._ctx;
-        ctx.lineWidth = options.weight;
+        ctx.lineWidth = options.weight!;
         for (const path of parts) {
             for (let j = 1; j < path.length; j++) {
                 const pointStart = path[j - 1]!;
@@ -202,8 +202,8 @@ class HotlineCanvasRenderer extends Canvas {
 
                 // Create a gradient for each segment, pick start and end colors from palette gradient
                 const gradient = ctx.createLinearGradient(pointStart.x, pointStart.y, pointEnd.x, pointEnd.y);
-                const gradientStartRGB = this._palette.getRGBForValue(pointStart.z, options.min, options.max);
-                const gradientEndRGB = this._palette.getRGBForValue(pointEnd.z, options.min, options.max);
+                const gradientStartRGB = this._palette.getRGBForValue(pointStart.z, options.min!, options.max!);
+                const gradientEndRGB = this._palette.getRGBForValue(pointEnd.z, options.min!, options.max!);
                 gradient.addColorStop(0, 'rgb(' + gradientStartRGB.join(',') + ')');
                 gradient.addColorStop(1, 'rgb(' + gradientEndRGB.join(',') + ')');
 
@@ -218,13 +218,13 @@ class HotlineCanvasRenderer extends Canvas {
 }
 
 export interface HotlineOptions extends PolylineOptions {
-    renderer: HotlineCanvasRenderer,
-    weight: number,
-    outlineWidth: number,
-    outlineColor: string,
-    min: number,
-    max: number,
-    palette: ColorPalette,
+    renderer?: HotlineCanvasRenderer,
+    weight?: number,
+    outlineWidth?: number,
+    outlineColor?: string,
+    min?: number,
+    max?: number,
+    palette?: ColorPalette,
 }
 
 export class Hotline extends Polyline {
@@ -316,6 +316,6 @@ export class Hotline extends Polyline {
     }
 
     _clickTolerance() {
-        return this.options.weight / 2 + this.options.outlineWidth + 10;
+        return this.options.weight! / 2 + this.options.outlineWidth! + 10;
     }
 }
