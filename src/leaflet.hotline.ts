@@ -255,6 +255,11 @@ export class Hotline extends Polyline {
         return super.beforeAdd!(map)
     }
 
+    setStyle(style: HotlineOptions): this {
+        return super.setStyle(style);
+    }
+
+
     /**
      * Just like the Leaflet version, but with support for a z coordinate.
      */

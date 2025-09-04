@@ -62,6 +62,7 @@ export declare class Hotline extends Polyline {
     };
     constructor(latlngs: LatLngExpression[] | LatLngExpression[][], options?: HotlineOptions);
     beforeAdd(map: Map): this;
+    setStyle(style: HotlineOptions): this;
     /**
      * Just like the Leaflet version, but with support for a z coordinate.
      */

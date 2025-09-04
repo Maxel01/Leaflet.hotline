@@ -185,6 +185,9 @@ class Hotline extends Polyline {
         this.options.renderer = new HotlineCanvasRenderer(this.options);
         return super.beforeAdd(map);
     }
+    setStyle(style) {
+        return super.setStyle(style);
+    }
     /**
      * Just like the Leaflet version, but with support for a z coordinate.
      */
